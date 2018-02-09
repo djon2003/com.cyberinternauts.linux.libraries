@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# test from repo itself
+
 PATH="$PATH:/opt/bin:/usr/local/sbin"
 
 # Put in a variable main script arguments

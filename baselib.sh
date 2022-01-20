@@ -19,6 +19,7 @@ function isProgramExist()
 	command -v $progToTest >/dev/null 2>&1 || { echo "N"; return; }
 	echo "Y";
 }
+readonly -f isProgramExist
 
 function ensureProgramExist() 
 # $1 Program to test
@@ -29,6 +30,7 @@ function ensureProgramExist()
 		echo >&2 "I require $progToTest but it's not installed.  Aborting."; exit 1;
 	fi
 }
+readonly -f ensureProgramExist
 
 function hasMainArg()
 # $1 string to find
@@ -38,6 +40,7 @@ function hasMainArg()
 	containsElement "$1" "${mainArgs[@]}"
 	return $?
 }
+readonly -f hasMainArg
 
 function containsElement()
 # $1 string to find
@@ -49,6 +52,7 @@ function containsElement()
   for e; do [[ "$e" == "$match" ]] && return 0; done
   return 1
 }
+readonly -f containsElement
 
 function executeAndFilterErrors()
 # $1 array of filters: Have to be declared outside also with the same name "errorsToFilter"
@@ -82,6 +86,7 @@ function executeAndFilterErrors()
 		fi
 	)
 }
+readonly -f executeAndFilterErrors
 
 function activateLogs()
 # $1 = logOutput: What is the output for logs: SCREEN, DISK, BOTH. Default is DISK. Optional parameter.
@@ -126,6 +131,7 @@ function activateLogs()
 		exit		
 	fi
 }
+readonly -f activateLogs
 
 function launchOnlyOnce()
 {
@@ -152,6 +158,7 @@ function launchOnlyOnce()
 		exit
 	fi
 }
+readonly -f launchOnlyOnce
 
 function launchScriptWithFullPath()
 {
@@ -174,12 +181,14 @@ function launchScriptWithFullPath()
 		exit
 	fi
 }
+readonly -f launchScriptWithFullPath
 
 function setDirToScriptOne()
 {
 	local scriptDir=$(dirname "$0")
 	cd "$scriptDir"
 }
+readonly -f setDirToScriptOne
 
 function escapeForRegEx() 
 # $1=$stringToEscape
@@ -214,6 +223,7 @@ function escapeForRegEx()
 	
 	echo $escaped
 }
+readonly -f escapeForRegEx
 
 
 function showProgress()
@@ -255,6 +265,7 @@ function renameFunction()
 	
 	return $?
 }
+readonly -f renameFunction
 
 function sendMail()
 #   Send a mail message

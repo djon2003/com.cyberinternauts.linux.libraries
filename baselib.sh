@@ -82,16 +82,28 @@ function executeAndFilterErrors()
 	)
 }
 
-function activateLogs() {
-	local isFileDescriptor3Exist=$(command 2>/dev/null >&3 && echo "Y")
+function activateLogs()
+# $1 = logOutput: What is the output for logs: SCREEN, DISK, BOTH. Default is DISK. Optional parameter.
+{
+	local logOutput=$1
+	if [ "$logOutput" != "SCREEN" ] && [ "$logOutput" != "BOTH" ]; then
+		logOutput="DISK"
+	fi
+	
+	if [ "$logOutput" = "SCREEN" ]; then
+		echo "Logs will only be output to screen"
+		return
+	fi
 	
 	hasMainArg "--force-log"
 	local forceLog=$?
+		
+	local isFileDescriptor3Exist=$(command 2>/dev/null >&3 && echo "Y")
 	
 	if [ "$isFileDescriptor3Exist" = "Y" ]; then
-		echo "I1:$(pwd)" >> /tmp/bbb.txt
 		echo "Logs are configured"
 	elif [ "$forceLog" = "1" ] && ([ ! -t 1 ] || [ ! -t 2 ]); then
+		# Use external file descriptor if they are set except if having "--force-log"
 		echo "Logs are configured externally"
 	else
 		echo "Relaunching with logs files"
@@ -100,15 +112,22 @@ function activateLogs() {
 		
 		local logFileName=$(basename "$0")"."$(date +%Y-%m-%d.%k-%M-%S)
 	
-		# FROM: https://stackoverflow.com/a/45426547/214898
-		exec 3<> "$logPath/$logFileName.log"
-			
-		"$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 &
-		exit
+		if [ "$logOutput" = "DISK" ]; then
+			# FROM: https://stackoverflow.com/a/45426547/214898
+			exec 3<> "$logPath/$logFileName.log"
+			"$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 &
+		else
+			# FROM: https://stackoverflow.com/a/70790574/214898
+			exec 3>&1
+			{ "$0" "${mainArgs[@]}" | tee -a "$logPath/$logFileName.log" & } 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" &
+		fi
+		
+		exit		
 	fi
 }
 
-function launchOnlyOnce() {
+function launchOnlyOnce()
+{
 	local scriptDir=$(dirname "$0")
 	local bashFile=$(echo "$0" | awk -F "/" '{print $NF}')
 	local fullProgramLine="$SHELL $scriptDir/$bashFile"

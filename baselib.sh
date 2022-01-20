@@ -152,7 +152,8 @@ function launchOnlyOnce()
 	fi
 }
 
-function launchScriptWithFullPath() {
+function launchScriptWithFullPath()
+{
 	local relaunched=$(
 		setDirToScriptOne
 		
@@ -173,7 +174,8 @@ function launchScriptWithFullPath() {
 	fi
 }
 
-function setDirToScriptOne() {
+function setDirToScriptOne()
+{
 	local scriptDir=$(dirname "$0")
 	cd "$scriptDir"
 }
@@ -213,7 +215,7 @@ function escapeForRegEx()
 }
 
 
-function show_progress()
+function showProgress()
 # $1 = $current
 # $2 = $max
 {
@@ -238,7 +240,22 @@ function show_progress()
 	echo -ne "$percentLine ($percent%)\\r"
 }
 
-function send_mail()
+function renameFunction()
+# $1 = current function name
+# $2 = new function name
+# FROM: https://mharrison.org/post/bashfunctionoverride/
+{
+    local ORIG_FUNC=$(declare -f $1)
+    local NEWNAME_FUNC="$2${ORIG_FUNC#$1}"
+	unset -f $1 2>/dev/null
+	if [ $? -eq 0 ]; then
+		eval "$NEWNAME_FUNC"
+	fi
+	
+	return $?
+}
+
+function sendMail()
 #   Send a mail message
 #   $1 = subject
 #   $2 = to

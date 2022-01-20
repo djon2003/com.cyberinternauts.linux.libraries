@@ -32,6 +32,7 @@ function ensureProgramExist()
 
 function hasMainArg()
 # $1 string to find
+# return 0 if there is a match, otherwise 1
 {
 	local match="$1"
 	containsElement "$1" "${mainArgs[@]}"
@@ -41,6 +42,7 @@ function hasMainArg()
 function containsElement()
 # $1 string to find
 # $2 array to search in
+# return 0 if there is a match, otherwise 1
 {
   local e match="$1"
   shift
@@ -49,7 +51,7 @@ function containsElement()
 }
 
 function executeAndFilterErrors()
-# $1 array of filters: Have to be declared outside also with the same name
+# $1 array of filters: Have to be declared outside also with the same name "errorsToFilter"
 # $2 command to execute. If using double quote, they shall be espaced with a backslash
 # Usage example: 
 #   errorsToFilter=("@Recy cle" "@Recycle" "three")

@@ -64,7 +64,6 @@ function executeAndFilterErrors()
 	done
 	
 	local command=$@
-	printf '%s\n' "${command[@]}"
 	(
 		exec 10>&1 #set up extra file descriptors
 

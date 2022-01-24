@@ -288,3 +288,16 @@ function sendMail()
    /usr/sbin/sendmail -t < "$tmpfile"
    rm $tmpfile
 }
+
+function addLog()
+# $1 level of the log (D or DEBUG, N or NORMAL)
+# $2 log content
+{
+	local thisLogLevel=$1
+	local thisLog=$2
+	if [ "$logLevel" != "DEBUG" ] && ([ "$thisLogLevel" = "D" ] || [ "$thisLogLevel" = "DEBUG" ]); then
+		return
+	fi
+	
+	echo "$thisLog"
+}

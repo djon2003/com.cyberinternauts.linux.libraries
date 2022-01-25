@@ -118,6 +118,7 @@ function activateLogs()
 		
 		local logFileName=$(basename "$0")"."$(date +%Y-%m-%d.%k-%M-%S)
 	
+		exec 4<> "$logPath/$logFileName.log" # File descriptor created only to get the underlying file in any output option
 		if [ "$logOutput" = "DISK" ]; then
 			# FROM: https://stackoverflow.com/a/45426547/214898
 			exec 3<> "$logPath/$logFileName.log"

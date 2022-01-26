@@ -296,6 +296,11 @@ function addLog()
 {
 	local thisLogLevel=$1
 	local thisLog=$2
+	
+	if [ "$logLevel" = "ERRORS" ]; then
+		return
+	fi
+	
 	if [ "$logLevel" != "DEBUG" ] && ([ "$thisLogLevel" = "D" ] || [ "$thisLogLevel" = "DEBUG" ]); then
 		return
 	fi

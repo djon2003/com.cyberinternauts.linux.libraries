@@ -273,21 +273,52 @@ function sendMail()
 #   $1 = subject
 #   $2 = to
 #   $3 = from
-#   $4 = msg
+#   $4 = msg : Can either be a file path or the content itself
+#   $5 = attachmentFile
 {
-   local tmpfile="/tmp/$(basename $0).$$.tmp"
-   /bin/echo -e "Subject: $1\r" > "$tmpfile"
-   /bin/echo -e "To: $2\r" >> "$tmpfile"
-   /bin/echo -e "From: $3\r" >> "$tmpfile"
-   /bin/echo -e "\r" >> "$tmpfile"
-   if [ -f "$4" ]; then
-      cat "$4" >> "$tmpfile"
-      /bin/echo -e "\r\n" >> "$tmpfile"
-   else
-      /bin/echo -e "$4\r\n" >> "$tmpfile"
-   fi
-   /usr/sbin/sendmail -t < "$tmpfile"
-   rm $tmpfile
+	local attachmentFile="$5"
+	
+	local attachmentFileName=$(basename "$attachmentFile")
+	local boundary="?simple123bound-=?"
+	local tmpfile="/tmp/$(basename $0).$$.tmp"
+	/bin/echo -e "Subject: $1\r" > "$tmpfile"
+	/bin/echo -e "To: $2\r" >> "$tmpfile"
+	/bin/echo -e "From: $3\r" >> "$tmpfile"
+	/bin/echo -e "Mime-Version: 1.0\r" >> "$tmpfile"
+	/bin/echo -e "Content-Type: multipart/mixed; boundary=\"$boundary\"\r" >> "$tmpfile"
+	/bin/echo -e "\r" >> "$tmpfile"
+	
+	# Message part
+	/bin/echo -e "--$boundary\r" >> "$tmpfile"
+	/bin/echo -e "Content-Type: text-plain; charset=\"utf-8\"\r" >> "$tmpfile"
+	/bin/echo -e "Content-Transfer-Encoding: 7bit\r" >> "$tmpfile"
+	/bin/echo -e "Content-Disposition: inline\r" >> "$tmpfile"
+	/bin/echo -e "\r" >> "$tmpfile"
+	if [ -f "$4" ]; then
+	  cat "$4" >> "$tmpfile"
+	else
+	  /bin/echo -e "$4" >> "$tmpfile"
+	fi
+	
+	# Attachment part
+	if [ "$attachmentFile" != "" ] && [ -f "$attachmentFile" ]; then
+		/bin/echo -e "\r" >> "$tmpfile"
+		/bin/echo -e "\r" >> "$tmpfile"
+		/bin/echo -e "--$boundary\r" >> "$tmpfile"
+		/bin/echo -e "Content-Type: text-plain; charset=\"utf-8\"\r" >> "$tmpfile"
+		/bin/echo -e "Content-Transfer-Encoding: base64\r" >> "$tmpfile"
+		/bin/echo -e "Content-Disposition: attachment; filename=\"$attachmentFileName\"\r" >> "$tmpfile"
+		/bin/echo -e "\r" >> "$tmpfile"
+		
+		/bin/echo -e $(cat "$attachmentFile" | base64 -w 76) >> "$tmpfile"
+	fi
+	
+	/bin/echo -e "\r" >> "$tmpfile"
+	/bin/echo -e "--$boundary--\r\n" >> "$tmpfile"
+	
+	# Send email & delete temporary file
+	/usr/sbin/sendmail -t < "$tmpfile"
+	rm $tmpfile
 }
 
 function addLog()

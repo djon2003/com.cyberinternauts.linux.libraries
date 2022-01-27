@@ -290,9 +290,7 @@ function sendMail()
 	
 	# Message part
 	/bin/echo -e "--$boundary\r" >> "$tmpfile"
-	/bin/echo -e "Content-Type: text-plain; charset=\"utf-8\"\r" >> "$tmpfile"
-	/bin/echo -e "Content-Transfer-Encoding: 7bit\r" >> "$tmpfile"
-	/bin/echo -e "Content-Disposition: inline\r" >> "$tmpfile"
+	/bin/echo -e "Content-Type: text/plain; charset=\"UTF-8\"\r" >> "$tmpfile"
 	/bin/echo -e "\r" >> "$tmpfile"
 	if [ -f "$4" ]; then
 	  cat "$4" >> "$tmpfile"
@@ -305,7 +303,7 @@ function sendMail()
 		/bin/echo -e "\r" >> "$tmpfile"
 		/bin/echo -e "\r" >> "$tmpfile"
 		/bin/echo -e "--$boundary\r" >> "$tmpfile"
-		/bin/echo -e "Content-Type: text-plain; charset=\"utf-8\"\r" >> "$tmpfile"
+		/bin/echo -e "Content-Type: text/plain; charset=\"UTF-8\"\r" >> "$tmpfile"
 		/bin/echo -e "Content-Transfer-Encoding: base64\r" >> "$tmpfile"
 		/bin/echo -e "Content-Disposition: attachment; filename=\"$attachmentFileName\"\r" >> "$tmpfile"
 		/bin/echo -e "\r" >> "$tmpfile"

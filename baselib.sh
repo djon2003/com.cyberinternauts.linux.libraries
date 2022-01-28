@@ -280,7 +280,7 @@ function sendMail()
 	
 	local attachmentFileName=$(basename "$attachmentFile")
 	local boundary="?simple123bound-=?"
-	local tmpfile="/tmp/$(basename $0).$$.tmp"
+	local tmpfile="$(basename $0).$$.tmp" # Not using /tmp/ folder anymore because it may be a small mounted drive where as the current directory shall have enough space
 	/bin/echo -e "Subject: $1\r" > "$tmpfile"
 	/bin/echo -e "To: $2\r" >> "$tmpfile"
 	/bin/echo -e "From: $3\r" >> "$tmpfile"
@@ -295,7 +295,7 @@ function sendMail()
 	if [ -f "$4" ]; then
 	  cat "$4" >> "$tmpfile"
 	else
-	  /bin/echo -e "$4" >> "$tmpfile"
+	  printf "%s" "$4" >> "$tmpfile"
 	fi
 	
 	# Attachment part
@@ -308,7 +308,7 @@ function sendMail()
 		/bin/echo -e "Content-Disposition: attachment; filename=\"$attachmentFileName\"\r" >> "$tmpfile"
 		/bin/echo -e "\r" >> "$tmpfile"
 		
-		/bin/echo -e $(cat "$attachmentFile" | base64 -w 76) >> "$tmpfile"
+		base64 -w 76 < "$attachmentFile" >> "$tmpfile"
 	fi
 	
 	/bin/echo -e "\r" >> "$tmpfile"
@@ -316,6 +316,8 @@ function sendMail()
 	
 	# Send email & delete temporary file
 	/usr/sbin/sendmail -t < "$tmpfile"
+	
+	# Remove temporary file
 	rm $tmpfile
 }
 

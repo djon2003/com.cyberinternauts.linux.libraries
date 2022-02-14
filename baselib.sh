@@ -62,6 +62,7 @@ function executeAndFilterErrors()
 #   executeAndFilterErrors "${errorsToFilter[@]}" ls -lLAsR \"$path\"
 {
 	local -n errorsToFilter=$1 2>/dev/null; # Do work even though there is an error, so forget it.
+	local i filter
 	for i in "${errorsToFilter[@]}"
 	do : 
 		shift
@@ -71,7 +72,7 @@ function executeAndFilterErrors()
 	(
 		exec 10>&1 #set up extra file descriptors
 
-		error=$( { eval "${command[@]}" 1>&10; } 2>&1 )
+		local error=$( { eval "${command[@]}" 1>&10; } 2>&1 )
 		for i in "${errorsToFilter[@]}"
 		do : 
 			filter=$(escapeForRegEx "$i")

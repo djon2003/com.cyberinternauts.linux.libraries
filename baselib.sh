@@ -321,6 +321,37 @@ function sendMail()
 	rm $tmpfile
 }
 
+
+function getLibraryVariableName()
+# $1 initialName
+{
+	local initialName="$1"
+	# Reference to get script file name: https://unix.stackexchange.com/a/4658/218722
+	#TODO: Test in other environment and in other sourcing chain (calling this method within another library, etc)
+	echo "__$(basename $BASH_SOURCE | sed s/[^a-zA-Z0-9]//)__$initialName"
+}
+readonly -f getLibraryVariableName
+
+function getLibraryVariable()
+# $1 initialName
+{
+	local initialName="$1"
+	local varName=$(getLibraryVariableName "$initialName")
+	echo ${!varName}
+}
+readonly -f getLibraryVariable
+
+function setLibraryVariable()
+# $1 initialName
+# $2 value
+{
+	local initialName="$1"
+	local value="$2"
+	local varName=$(getLibraryVariableName "$initialName")
+	eval "$varName=$value"
+}
+readonly -f setLibraryVariable
+
 function addLog()
 # $1 level of the log (D or DEBUG, N or NORMAL)
 # $2 log content

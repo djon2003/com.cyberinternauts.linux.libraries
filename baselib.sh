@@ -352,12 +352,27 @@ function setLibraryVariable()
 }
 readonly -f setLibraryVariable
 
+declare "$(getLibraryVariableName addLogCounter)=0"
 function addLog()
-# $1 level of the log (D or DEBUG, N or NORMAL)
+# $1 level of the log (D or DEBUG, N or NORMAL, E OR ERROR)
 # $2 log content
+# external variable: logLevel script log level (DEBUG, NORMAL, ERRORS). Default NORMAL.
 {
 	local thisLogLevel=$1
 	local thisLog=$2
+	
+	local addLogCounter=$(getLibraryVariable addLogCounter)
+	
+	if [ "$logLevel" != "DEBUG" ] && [ "$logLevel" != "ERRORS" ]; then
+		logLevel="NORMAL"
+	fi
+	
+	if [ "$thisLogLevel" = "E" ] || [ "$thisLogLevel" = "ERROR" ]; then
+		addLogCounter=$(($addLogCounter + 1))
+		setLibraryVariable addLogCounter $addLogCounter
+		echo "$addLogCounter: $thisLog" >&2
+		return
+	fi
 	
 	if [ "$logLevel" = "ERRORS" ]; then
 		return
@@ -367,5 +382,7 @@ function addLog()
 		return
 	fi
 	
-	echo "$thisLog"
+	addLogCounter=$(($addLogCounter + 1))
+	setLibraryVariable addLogCounter $addLogCounter
+	echo "$addLogCounter: $thisLog"
 }

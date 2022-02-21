@@ -126,7 +126,7 @@ function activateLogs()
 			"$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 &
 		else
 			# FROM: https://stackoverflow.com/a/70790574/214898
-			{ "$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 ; } 3>&1 | tee -a "$logPath/$logFileName.log" &
+			{ "$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 & } 3>&1 | tee -a "$logPath/$logFileName.log" &
 		fi
 		
 		exit		

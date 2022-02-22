@@ -370,7 +370,7 @@ function addLog()
 	if [ "$thisLogLevel" = "E" ] || [ "$thisLogLevel" = "ERROR" ]; then
 		addLogCounter=$(($addLogCounter + 1))
 		setLibraryVariable addLogCounter $addLogCounter
-		printf "$addLogCounter: $thisLog"'\n' >&2
+		printf "%s\n" "$addLogCounter: $thisLog" >&2
 		return
 	fi
 	
@@ -384,5 +384,5 @@ function addLog()
 	
 	addLogCounter=$(($addLogCounter + 1))
 	setLibraryVariable addLogCounter $addLogCounter
-	printf "$addLogCounter: $thisLog"'\n'
+	printf "%s\n" "$addLogCounter: $thisLog"
 }

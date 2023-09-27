@@ -184,12 +184,12 @@ function launchScriptWithFullPath()
 }
 readonly -f launchScriptWithFullPath
 
-function setDirToScriptOne()
+function switchToScriptDirectory()
 {
 	local scriptDir=$(dirname "$0")
 	cd "$scriptDir"
 }
-readonly -f setDirToScriptOne
+readonly -f switchToScriptDirectory
 
 function escapeForRegEx() 
 # $1=$stringToEscape

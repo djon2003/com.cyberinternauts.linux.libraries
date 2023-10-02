@@ -164,7 +164,7 @@ readonly -f launchOnlyOnce
 function launchScriptWithFullPath()
 {
 	local relaunched=$(
-		launchScriptWithFullPath
+		switchToScriptDirectory
 		
 		scriptDir=$(dirname "$0")
 		curDir=$(pwd)

@@ -159,7 +159,7 @@ function launchOnlyOnce()
 	
 	if [ $nbInstances -gt $nbOneInstance ]; then
 		echo "Script \"$scriptDir/$bashFile\" already running"
-		exit
+		exit 999
 	fi
 }
 readonly -f launchOnlyOnce

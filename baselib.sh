@@ -199,6 +199,27 @@ function switchToScriptDirectory()
 }
 readonly -f switchToScriptDirectory
 
+function getRealPath()
+#$1 path Path to transpose to its real path
+{
+	local path="$1"
+	local folder="$path"
+	local fileName=""
+	if [ ! -d "$folder" ]; then
+		folder=$(dirname "$path")
+		fileName=$(basename "$path")
+	fi
+	
+	local realFolder=$(cd "$folder";pwd -P;)
+	local realPath="$realFolder"
+	if [ "$fileName" != "" ]; then
+		realPath="$realPath/$fileName"
+	fi
+	
+	echo "$realPath"
+}
+readonly -f getRealPath
+
 function escapeForRegEx() 
 # $1=$stringToEscape
 

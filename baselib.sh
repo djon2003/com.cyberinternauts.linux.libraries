@@ -114,6 +114,9 @@ function activateLogs()
 		echo "Logs are configured externally"
 	else
 		echo "Relaunching with logs files"
+		switchToScriptDirectory
+		local scriptName=$(basename "$0")
+		local scriptPath="$(pwd)/$scriptName"
 		local logPath="logs"
 		if [ ! -d $logPath ]; then mkdir $logPath; fi
 		
@@ -123,10 +126,10 @@ function activateLogs()
 		if [ "$logOutput" = "DISK" ]; then
 			# FROM: https://stackoverflow.com/a/45426547/214898
 			exec 3<> "$logPath/$logFileName.log"
-			"$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 &
+			"$scriptPath" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 &
 		else
 			# FROM: https://stackoverflow.com/a/70790574/214898
-			{ "$0" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 & } 3>&1 | tee -a "$logPath/$logFileName.log" &
+			{ "$scriptPath" "${mainArgs[@]}" 2>&1 1>&3 | tee -a "$logPath/$logFileName.err" 1>&3 & } 3>&1 | tee -a "$logPath/$logFileName.log" &
 		fi
 		
 		exit		
@@ -186,8 +189,13 @@ readonly -f launchScriptWithFullPath
 
 function switchToScriptDirectory()
 {
+	local hasSwitched=$(getLibraryVariable "switchToScriptDirectory_SW")
+	if [ "$hasSwitched" = "Y" ]; then return; fi
+
 	local scriptDir=$(dirname "$0")
 	cd "$scriptDir"
+	
+	setLibraryVariable "switchToScriptDirectory_SW" "Y"
 }
 readonly -f switchToScriptDirectory
 

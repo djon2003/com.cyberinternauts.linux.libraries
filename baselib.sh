@@ -381,6 +381,27 @@ function setLibraryVariable()
 }
 readonly -f setLibraryVariable
 
+function getDiskFreeSpace()
+# $1 = diskPath: disk path to get free space
+# $2 = returnUnit: return size either in kilobytes (k) or in megabytes (m). Default is (k).
+# return: free space of the disk path in kilobytes or megabytes
+{
+	local diskPath="$1"
+	local returnUnit="$2"
+	
+	if [ "$returnUnit" != "m" ]; then
+		returnUnit="k"
+	fi
+	
+	local diskSpaceLine2
+	local diskSpaceLine=$(df -$returnUnit "$diskPath")
+	IFS=' ' read -rd '' -a diskSpaceLine2 <<< "$diskSpaceLine"
+	local freeSpace=${diskSpaceLine2[9]} # 9th position is available space
+	
+	echo $freeSpace
+}
+readonly -f getDiskFreeSpace
+
 declare "$(getLibraryVariableName addLogCounter)=0"
 function addLog()
 # $1 level of the log (D or DEBUG, N or NORMAL, E OR ERROR)
